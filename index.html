@@ -1,7 +1,64 @@
 <!DOCTYPE html>
 <html>
-	<body>
-		<h1>Heading</h1>
-		<p>text</p>
-	</body>
+
+<head>
+	<title>LBFS</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<header>
+		<h1>Location Based File Sharing</h1>
+	</header>
+	<main>
+		<div class="left-box">
+			<!-- This is the controls and display for grabbing user location -->
+			<div class="location-container">
+				<button class="button" onclick="getLocation()">Get Location</button>
+
+				<div class="location" id="location"></div>
+			</div>
+			
+			<!-- The map display -->
+			<!-- html code modified from OpenStreetMap share button,						-->
+			<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
+			<iframe class="map" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+				src="https://www.openstreetmap.org/export/embed.html?bbox=-86.52328,39.17290,-86.52332,39.17294&layer=mapnik"></iframe>
+			</br><small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger Map</a></small>
+		</div>
+
+
+		<!-- Everything inside right-box is still barely developed, go ahead and modify -->
+		<div class="right-box">
+			<div id="entry-container">
+				<!-- File entries are added here -->
+			</div>
+
+			<button class="button" onclick="addEntry()">Add Entry</button>
+		</div>
+	</main>
+
+	<!-- This template is used by the addEntry() function -->
+	<template id="entry-template">
+		<!-- The entry is intended to have a toggleable dropdown menu when clicked (but looks jank rn) -->
+		<div class="entry">
+
+			<div class="file-container" onclick="toggleMenu(this)">
+				<!-- Entry content here -->
+				<span class="name"></span>
+
+				<div class="menu">
+					<p> dropdown info/buttons </p>
+				</div>
+			</div>
+
+			<button class="delete-button" onclick="deleteEntry(this)">Delete</button>
+		</div>
+	</template>
+
+	<script type="text/javascript" src="script.js"></script>
+
+
+</body>
+
 </html>

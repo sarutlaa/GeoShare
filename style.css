@@ -1,0 +1,125 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+    font-size: 18px;
+}
+
+header {
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    flex: 0 0 auto;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    flex: 1 0 auto;
+}
+
+
+
+/* Left Container */
+.left-box {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+}
+
+    /* Location grabbing */
+.location-container {
+    display: flex;
+    flex-direction: row;
+    background-color: #ccc;
+}
+
+.button {
+    background-color: #2f2;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #2d2;
+}
+
+.location {
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 8px;
+}
+
+    /* The map */
+.map {
+    width: 100%;
+    height: 70vh;
+    /*aspect-ratio: 2/1;*/
+    border: 1px solid #ccc;
+}
+
+/* File list */
+.right-box {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.entry {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.file-container {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-container:hover {
+    background-color: #f2f2f2;
+}
+
+.name {
+    display: flex;
+    margin-left: 10px;
+    /* lol why won't this align left */
+    text-align: left;
+    align-items: left;
+}
+
+.menu {
+    display: none;
+    background-color: #ddd;
+}
+    /* for toggleMenu() */
+.menu.active {
+    display: block;
+}
+
+.delete-button {
+    background-color: #f22;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #d22;
+}
