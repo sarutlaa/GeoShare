@@ -11,7 +11,7 @@ function addEntry() {
     // this will change when we have filenames
     const entries = entryContainer.querySelectorAll(".entry");
     entries.forEach((entry, index) => {
-        entry.querySelector(".name").textContent = `Entry ${index + 1}`;
+        entry.querySelector(".name").textContent = `File ${index + 1}`;
     });
 }
 
