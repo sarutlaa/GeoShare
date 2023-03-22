@@ -46,10 +46,15 @@
 			<div class="file-container" onclick="toggleMenu(this)">
 				<!-- Entry content here -->
 				<span class="name"></span>
+				
+				<form action="/action_page.php">
+					<input type="file" id="myFile" name="filename">
+					<input type="submit">
+				  </form>
 
-				<div class="menu">
+				<!-- <div class="menu">
 					<p> dropdown info/buttons </p>
-				</div>
+				</div> -->
 			</div>
 
 			<button class="delete-button" onclick="deleteEntry(this)">Delete</button>
