@@ -93,31 +93,61 @@ function inputRadius(event) {
 
 }
 
+function updateMapLocation(latitude, longitude) {
+    const userLocation = [latitude, longitude];
+    // Update location display bar
+    const location = document.getElementById("location");
+    location.innerHTML = `Current location:  Latitude: ${latitude} | Longitude: ${longitude}`;
+    // Remove any existing marker
+    if (currentLocationMarker) {
+        map.removeLayer(currentLocationMarker);
+    }
+    // Add a new marker for the current location
+    currentLocationMarker = L.marker(userLocation).addTo(map);
+
+    // Relocate file radius input circle
+    if (inputCircle) {
+        inputCircle.setLatLng(userLocation);
+    }
+    map.setView(userLocation, 17);
+    // Update "View Larger Map" link
+    const newHref = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+    osmLinkHref.setAttribute("href", newHref);
+
+}
+
+// Function to handle adding a pin to the map
+function onMapClick(event) {
+    const userLocation = event.latlng;
+    latitude = userLocation.lat;
+    longitude = userLocation.lng;
+    
+    updateMapLocation(latitude, longitude);
+
+    // Turn off Spoof Mode
+    toggleSpoofMode();
+}
+
+function toggleSpoofMode() {
+    const spoofPin = document.getElementById("spoof-pin");
+    const isPinAddingMode = spoofPin.classList.toggle("active");
+    if (isPinAddingMode) {
+        spoofPin.textContent = "Cancel adding pin";
+        map.on("click", onMapClick);
+    } else {
+        spoofPin.textContent = "Set Location";
+        map.off("click", onMapClick);
+    }
+}
+
 function getLocation() {
     const location = document.getElementById("location");
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
-            location.innerHTML = `Current location:  Latitude: ${latitude} | Longitude: ${longitude}`;
-
-            // Update "View Larger Map" link
-            const newHref = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-            osmLinkHref.setAttribute("href", newHref);
-
-            // Move map view
-            userLocation = [latitude, longitude];
-            map.setView(userLocation, 18);
-
-            // Remove any existing marker
-            if (currentLocationMarker) {
-                map.removeLayer(currentLocationMarker);
-            }
-
-            // Add a new marker for the current location
-            currentLocationMarker = L.marker(userLocation).addTo(map);
-
-
+            
+            updateMapLocation(latitude, longitude);
         });
     } else {
         location.innerHTML = "Geolocation is not supported by this browser.";
