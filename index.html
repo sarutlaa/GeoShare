@@ -4,6 +4,12 @@
 <head>
 	<title>LBFS</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+	integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+	crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+	integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+	crossorigin=""></script>
 </head>
 
 <body>
@@ -21,9 +27,8 @@
 			<!-- The map display -->
 			<!-- html code modified from OpenStreetMap share button,						-->
 			<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
-			<iframe class="map" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-				src="https://www.openstreetmap.org/export/embed.html?bbox=-86.52328,39.17290,-86.52332,39.17294&layer=mapnik"></iframe>
-			</br><small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger Map</a></small>
+			<div class="map" id="map"></div>
+			<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger Map</a></small>
 		</div>
 
 
@@ -51,7 +56,7 @@
 						<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
 						<label for="file-upload">Choose a file</label>
 					</div>
-					<input type="text" name="input_radius" placeholder="Enter Radius in meters" id="input_radius" ><br><br>
+					<input type="text" name="input_radius" placeholder="Enter Radius in meters" id="input_radius" onchange="inputRadius(event)"><br><br>
 					  
 					
 					<div>
