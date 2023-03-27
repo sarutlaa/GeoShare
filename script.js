@@ -35,6 +35,12 @@ function updateFileName(event) {
 
 function deleteEntry(button) {
     const entry = button.parentNode.parentNode.parentNode.parentNode;
+    
+    // If no input boxes, probably should remove the input circle
+    if (inputCircle && entry.parentNode.querySelectorAll(".entry").length < 2) {
+        map.removeLayer(inputCircle);
+    }
+
     entry.parentNode.removeChild(entry);
 
 }
