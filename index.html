@@ -14,7 +14,7 @@
 		<div class="left-box">
 			<!-- This is the controls and display for grabbing user location -->
 			<div class="location-container">
-				<button class="button" onclick="getLocation()">Get Location</button>
+				<button class="button-enter" onclick="getLocation()">Get Location</button>
 				<div class="location" id="location"></div>
 			</div>
 			
@@ -29,10 +29,10 @@
 
 		<!-- Everything inside right-box is still barely developed, go ahead and modify -->
 		<div class="right-box">
+			<button onclick="addEntry()">Add Entry</button>
 			<div id="entry-container">
 				<!-- File entries are added here -->
 			</div>
-			<button class="button" onclick="addEntry()">Add Entry</button>
 		</div>
 	</main>
 
@@ -41,26 +41,35 @@
 		<!-- The entry is intended to have a toggleable dropdown menu when clicked (but looks jank rn) -->
 		<div class="entry">
 
-			<div class="file-container" onclick="toggleMenu(this)">
+			<div class="file-container">
 				<!-- Entry content here -->
-				<span class="name"></span>
+				<span class="name">Enter File</span>
 				
-				<form action="action_page.php" method="POST" enctype="multipart/form-data">
-					<input type="file" name="file"><br><br>
+				<form class="menu.active" action="action_page.php" method="POST" enctype="multipart/form-data">
+					
+					<div class="file-upload-container">
+						<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
+						<label for="file-upload">Choose a file</label>
+					</div>
 					<input type="text" name="input_radius" placeholder="Enter Radius in meters" id="input_radius" ><br><br>
-					<button type="submit" class="button" name="submit">UPLOAD</button>				
+					  
+					
+					<div>
+						<button type="submit" class="button-enter" name="submit">UPLOAD</button>		
+						<button class="button-delete" onclick="deleteEntry(this)">Delete</button>
+
+					</div>		
 				</form>
 
 			</div>
 
-			<button class="delete-button" onclick="deleteEntry(this)">Delete</button>
 		</div>
 
 	</template>
 
 	<!-- Temporary way to view at the uploaded files -->
 	<form action="readfiles.php" method="POST" enctype="multipart/form-data">
-			<button type="submit" class="DBbutton" name="DBsubmit">VIEW DATABASE</button>				
+			<button type="submit" name="DBsubmit">VIEW DATABASE</button>				
 	</form>
 	
 

@@ -3,28 +3,25 @@ const entryTemplate = document.getElementById("entry-template");
 const mapIframe = document.querySelector(".map");
 const osmLinkHref = document.getElementById("osm-link");
 
+// Adds a new blank entry
 function addEntry() {
     const newEntry = entryTemplate.content.cloneNode(true);
     entryContainer.appendChild(newEntry);
 
-    // Adding numbers to entries to show how to name entries on click
-    // this will change when we have filenames
-    const entries = entryContainer.querySelectorAll(".entry");
-    entries.forEach((entry, index) => {
-        entry.querySelector(".name").textContent = `File ${index + 1}`;
-    });
+}
+
+function updateFileName(event) {
+    var input = event.target;
+    var fileName = input.files[0].name;
+    var fileNameElement = input.parentElement.parentElement.parentElement.querySelector(".name");
+    fileNameElement.innerHTML = fileName;
+    fileNameElement.classList.add('active');
 }
 
 function deleteEntry(button) {
-    const entry = button.parentNode;
+    const entry = button.parentNode.parentNode.parentNode.parentNode;
     entry.parentNode.removeChild(entry);
 
-    // Adding numbers to entries to show how to name entries on click
-    // this will change when we have filenames
-    const entries = entryContainer.querySelectorAll(".entry");
-    entries.forEach((entry, index) => {
-        entry.querySelector(".name").textContent = `File ${index + 1}`;
-    });
 }
 
 function toggleMenu(fileContainer) {
