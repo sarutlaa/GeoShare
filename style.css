@@ -187,7 +187,11 @@ button:hover {
     display: block;
 }
 
-
+#spoof-pin {
+    margin-top: 2px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
 
 .viewDB {
     background-color: #f22;
@@ -199,3 +203,4 @@ button:hover {
     cursor: pointer;
 
 }
+

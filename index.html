@@ -5,11 +5,9 @@
 	<title>LBFS</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-	integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-	crossorigin=""/>
+		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-	integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-	crossorigin=""></script>
+		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 </head>
 
 <body>
@@ -23,12 +21,13 @@
 				<button class="button-enter" onclick="getLocation()">Get Location</button>
 				<div class="location" id="location"></div>
 			</div>
-			
+
 			<!-- The map display -->
 			<!-- html code modified from OpenStreetMap share button,						-->
 			<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
 			<div class="map" id="map"></div>
-			<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger Map</a></small>
+			<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger
+					Map</a></small>
 		</div>
 
 
@@ -49,20 +48,21 @@
 			<div class="file-container">
 				<!-- Entry content here -->
 				<span class="name">Enter File</span>
-				
+
 				<form class="menu.active" action="action_page.php" method="POST" enctype="multipart/form-data">
-					
+
 					<div class="file-upload-container">
 						<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
 						<label for="file-upload">Choose a file</label>
 					</div>
-					<input type="text" name="input_radius" placeholder="Enter Radius in meters" id="input_radius" oninput="inputRadius(event)"><br><br>
-					
+					<input type="text" name="input_radius" placeholder="Enter Radius in meters" id="input_radius"
+						oninput="inputRadius(event)"><br><br>
+
 					<div>
-						<button type="submit" class="button-enter" name="submit">UPLOAD</button>		
+						<button type="submit" class="button-enter" name="submit">UPLOAD</button>
 						<button class="button-delete" onclick="deleteEntry(this)">Delete</button>
 
-					</div>		
+					</div>
 				</form>
 
 			</div>
@@ -73,9 +73,15 @@
 
 	<!-- Temporary way to view at the uploaded files -->
 	<form action="readfiles.php" method="POST" enctype="multipart/form-data">
-			<button type="submit" name="DBsubmit">VIEW DATABASE</button>				
+		<button type="submit" name="DBsubmit">VIEW DATABASE</button>
 	</form>
-	
+
+	<!-- Location spoofer, click this, then click map to drop pin -->
+	<div>
+		<button id="spoof-pin" onclick="toggleSpoofMode()">Set Location</button>
+	</div>
+
+
 
 
 	<script type="text/javascript" src="script.js"></script>
