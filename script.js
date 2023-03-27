@@ -14,6 +14,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 // Variable to store the current location marker
 
 let currentLocationMarker = null;
+let inputCircle = null;
 let longitude = null;
 let latitude = null;
 
@@ -53,8 +54,7 @@ function getRandomColor() {
     return color;
 }
 
-function drawCircle(latitude, longitude, radius) {
-    let color = getRandomColor();
+function drawCircle(latitude, longitude, radius, color = getRandomColor()) {
     const circleOptions = {
         color: color,
         fillColor: color,
@@ -65,10 +65,25 @@ function drawCircle(latitude, longitude, radius) {
 
 }
 
+// While the user types in the input radius box,
+//  this draws a temporary circle to show the file share radius live
 function inputRadius(event) {
-    var input = event.target;
-    var radius = input.radius;
-    console.log(radius);
+    const inputText = event.target.value;
+
+    // Check if the input is a valid integer between 0 and 100000
+    const isValidInteger = /^(0|[1-9]\d{0,4}|100000)$/.test(inputText);
+    if (inputCircle) {
+        map.removeLayer(inputCircle);
+    }
+
+    if (isValidInteger) {
+        if (longitude && latitude) {
+            inputCircle = drawCircle(latitude, longitude, inputText, "#6666ff");
+        }
+    } else {
+        // Cut off the last character (assuming it was the invalid one)
+        event.target.value = inputText.slice(0, -1);
+    }
 
 }
 
@@ -95,9 +110,8 @@ function getLocation() {
 
             // Add a new marker for the current location
             currentLocationMarker = L.marker(userLocation).addTo(map);
-            circle = drawCircle(latitude, longitude, 120);
 
-       
+
         });
     } else {
         location.innerHTML = "Geolocation is not supported by this browser.";
