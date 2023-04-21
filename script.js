@@ -110,6 +110,83 @@ function updateMapLocation(latitude, longitude) {
     osmLinkHref.setAttribute("href", newHref);
 
 }
+async function deleteFile(button) {
+    const fileContainer = button.parentElement.parentElement;
+    const nameSpan = fileContainer.querySelector(".name");
+    const fileName = nameSpan.textContent;
+
+    const payload = {
+        fileName: fileName + ".json",
+    };
+
+    try {
+        const response = await fetch("https://7w1gk3m52g.execute-api.us-east-2.amazonaws.com/beta/delete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+            console.log("File deleted successfully");
+            fileContainer.parentNode.remove(); // Remove the file entry from the page
+        } else {
+            console.error("Error deleting file:", response.status, response.statusText, await response.text());
+        }
+    } catch (error) {
+        console.error("Error deleting file:", error);
+    }
+}
+async function downloadFile(button) {
+    const fileContainer = button.parentElement.parentElement;
+    const nameSpan = fileContainer.querySelector(".name");
+    const fileName = nameSpan.textContent;
+    console.log("Downloading: ", fileName);
+
+    const payload = {
+        fileName: fileName + ".json",
+    };
+
+    try {
+        const response = await fetch("https://7w1gk3m52g.execute-api.us-east-2.amazonaws.com/beta/download", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+            const responseJson = await response.json();
+            const fileContent = responseJson.body;
+            const jsonData = JSON.parse(fileContent);
+            const mimeType = jsonData.mimeType;
+
+            // Create a Blob from the base64 file content
+            const byteCharacters = atob(jsonData.fileContent);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: mimeType });
+
+            // Download the file
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = jsonData.fileName;
+            link.click();
+            URL.revokeObjectURL(link.href);
+
+            console.log("File downloaded successfully");
+        } else {
+            console.error("Error downloading file:", response.status, response.statusText, await response.text());
+        }
+    } catch (error) {
+        console.error("Error downloading file:", error);
+    }
+}
 
 // Adds a new blank entry
 function addEntry(fileName) {
@@ -120,12 +197,11 @@ function addEntry(fileName) {
 
 }
 
-// This function will send the user's position to the lambda function scanForFiles
-// The lambda function will search the uploads folder in the S3 bucket for files that the
+// This function sends the user's position to the lambda function scanForFiles
+// The lambda function searches the uploads folder in the S3 bucket for files that the
 //    user should be able to see, based on the files' locations and radii, and the user location
-// Then the lambda function sends a json back with the names of the accessable files.
-// Then we parse it all and create entries in the entry list for every file
-//   Each entry in the list will have a download and delete button with functions etc.
+// Then the lambda function sends a list of the names of all the available files
+// Then an entry is created in the entry list for each available file.
 async function scanForFiles() {
     console.log("Scanning");
     const position = {
