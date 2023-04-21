@@ -33,10 +33,30 @@
 
 		<!-- Everything inside right-box is still barely developed, go ahead and modify -->
 		<div class="right-box">
-			<button onclick="addEntry()">Add Entry</button>
-			<button onclick="scanForFiles()">Scan</button>
+			<button onclick="scanForFiles()">Scan for files</button>
+			<div class="entry">
+				<div class="file-container">
+					<!-- Entry content here -->
+					<span class="name">Enter File</span>
+	
+	
+					<div class="file-upload-container">
+						<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
+						<label for="file-upload">Choose a file</label>
+					</div>
+					<input type="text" id="input-radius" name="input_radius" placeholder="Enter Radius in meters" id="input_radius"
+						oninput="inputRadius(event)"><br><br>
+	
+					<div>
+						<button type="submit" class="button-enter" onclick="uploadFile()">UPLOAD</button>
+	
+					</div>
+	
+				</div>
+	
+			</div>
 			<div id="entry-container">
-				<!-- File entries are added here -->
+
 			</div>
 		</div>
 	</main>
@@ -44,30 +64,20 @@
 	<!-- This template is used by the addEntry() function -->
 	<template id="entry-template">
 		<!-- The entry is intended to have a toggleable dropdown menu when clicked (but looks jank rn) -->
+		
+		<!--<button class="button-delete" onclick="deleteEntry(this)">Delete</button> -->
 		<div class="entry">
-
 			<div class="file-container">
 				<!-- Entry content here -->
-				<span class="name">Enter File</span>
-
-
-				<div class="file-upload-container">
-					<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
-					<label for="file-upload">Choose a file</label>
-				</div>
-				<input type="text" name="input_radius" placeholder="Enter Radius in meters" id="input_radius"
-					oninput="inputRadius(event)"><br><br>
-
+				<span class="name">--error: no file--</span>
 				<div>
-					<button type="submit" class="button-enter" onclick="uploadFile()">UPLOAD</button>
-					<button class="button-delete" onclick="deleteEntry(this)">Delete</button>
-
+					<button class="button-enter">Download</button>
+					<button class="button-delete">Delete</button>
 				</div>
 
 			</div>
 
 		</div>
-
 	</template>
 
 

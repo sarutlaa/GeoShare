@@ -18,12 +18,7 @@ let inputCircle = null;
 let longitude = null;
 let latitude = null;
 
-// Adds a new blank entry
-function addEntry() {
-    const newEntry = entryTemplate.content.cloneNode(true);
-    entryContainer.appendChild(newEntry);
 
-}
 
 function updateFileName(event) {
     var input = event.target;
@@ -116,6 +111,15 @@ function updateMapLocation(latitude, longitude) {
 
 }
 
+// Adds a new blank entry
+function addEntry(fileName) {
+    const newEntry = entryTemplate.content.cloneNode(true);
+    const nameSpan = newEntry.querySelector('.name');
+    nameSpan.textContent = fileName;
+    entryContainer.appendChild(newEntry);
+
+}
+
 // This function will send the user's position to the lambda function scanForFiles
 // The lambda function will search the uploads folder in the S3 bucket for files that the
 //    user should be able to see, based on the files' locations and radii, and the user location
@@ -123,32 +127,84 @@ function updateMapLocation(latitude, longitude) {
 // Then we parse it all and create entries in the entry list for every file
 //   Each entry in the list will have a download and delete button with functions etc.
 async function scanForFiles() {
-    console.log("scan");
+    console.log("Scanning");
+    const position = {
+        longitude: longitude,
+        latitude: latitude,
+    };
+
+    try {
+        const response = await fetch("https://7w1gk3m52g.execute-api.us-east-2.amazonaws.com/beta/scanfiles", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(position),
+        });
+
+        if (response.ok) {
+            entryContainer.innerHTML = '';
+
+            const responseBody = await response.json();
+            const availableFiles = JSON.parse(responseBody.body);
+            console.log("Files available:", availableFiles);
+            for (const fileName of availableFiles) {
+                addEntry(fileName);
+            }
+        } else {
+            console.error("Error scanning files:", response.status, response.statusText, await response.text());
+        }
+    } catch (error) {
+        console.error("Error scanning files:", error);
+    }
 }
 
-// This function currently uploads the file directly into the S3 bucket
-//  this needs updated to upload the file encoded inside a JSON file like this
-/*
-const jsonfile = {
-    fileContent: base64FileContent,
-    longitude:  longitude,
-    latitude:   latitude,
-    radius:     radius,
-}
-*/
-// Then that json file gets base64 encoded to be the fileContent for the json
-//    we send to the lambda function just like below.
-// So really the payload below will be a json file that contains a json file.
+
+// This function embeds the chosen file inside a json file, along with
+//    the user's latitude and longitude, and the file share radius
+// Then this json file is encoded inside a payload json that is sent to the
+//    lambda function uploadfile(). This function stores the file json in the S3 bucket.
+// So if the user uploads image.png, it is stored as image.png.json in the S3 bucket
 async function uploadFile() {
+    let radius = document.getElementById("input-radius").value;
+    console.log(radius, latitude, longitude);
+
+    // Assert coordinates and radius exist
+    if (latitude == null || longitude == null) {
+        console.error("No location coordinates");
+        return;
+    }
+    if (radius == null || radius <= 0) {
+        console.error("No input radius");
+        return;
+    }
+
+
     const fileInput = document.getElementById("file-upload");
     const file = fileInput.files[0];
 
     const reader = new FileReader();
     reader.onloadend = async function () {
+        // Convert the file to a base64-encoded string to store in the json
         const base64FileContent = reader.result.split(",")[1];
-        const payload = {
+
+        const jsonFile = {
             fileName: file.name,
             fileContent: base64FileContent,
+            longitude: longitude,
+            latitude: latitude,
+            radius: radius,
+        }
+
+        // Convert jsonFile to a json string
+        const jsonString = JSON.stringify(jsonFile);
+
+        // Convert the json string to a base64-encoded string
+        const base64Json = btoa(jsonString);
+
+        const payload = {
+            fileName: file.name + ".json",
+            fileContent: base64Json,
         };
 
         try {
@@ -159,7 +215,7 @@ async function uploadFile() {
                 },
                 body: JSON.stringify(payload),
             });
-            console.log(JSON.stringify(payload));
+
             if (response.ok) {
                 console.log("File uploaded successfully");
             } else {
