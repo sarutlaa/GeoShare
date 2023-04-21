@@ -116,6 +116,29 @@ function updateMapLocation(latitude, longitude) {
 
 }
 
+// This function will send the user's position to the lambda function scanForFiles
+// The lambda function will search the uploads folder in the S3 bucket for files that the
+//    user should be able to see, based on the files' locations and radii, and the user location
+// Then the lambda function sends a json back with the names of the accessable files.
+// Then we parse it all and create entries in the entry list for every file
+//   Each entry in the list will have a download and delete button with functions etc.
+async function scanForFiles() {
+    console.log("scan");
+}
+
+// This function currently uploads the file directly into the S3 bucket
+//  this needs updated to upload the file encoded inside a JSON file like this
+/*
+const jsonfile = {
+    fileContent: base64FileContent,
+    longitude:  longitude,
+    latitude:   latitude,
+    radius:     radius,
+}
+*/
+// Then that json file gets base64 encoded to be the fileContent for the json
+//    we send to the lambda function just like below.
+// So really the payload below will be a json file that contains a json file.
 async function uploadFile() {
     const fileInput = document.getElementById("file-upload");
     const file = fileInput.files[0];
