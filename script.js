@@ -34,8 +34,8 @@ function updateFileName(event) {
 }
 
 function deleteEntry(button) {
-    const entry = button.parentNode.parentNode.parentNode.parentNode;
-    
+    const entry = button.parentNode.parentNode.parentNode;
+
     // If no input boxes, probably should remove the input circle
     if (inputCircle && entry.parentNode.querySelectorAll(".entry").length < 2) {
         map.removeLayer(inputCircle);
@@ -116,12 +116,48 @@ function updateMapLocation(latitude, longitude) {
 
 }
 
+async function uploadFile() {
+    const fileInput = document.getElementById("file-upload");
+    const file = fileInput.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = async function () {
+        const base64FileContent = reader.result.split(",")[1];
+        const payload = {
+            fileName: file.name,
+            fileContent: base64FileContent,
+        };
+
+        try {
+            const response = await fetch("https://7w1gk3m52g.execute-api.us-east-2.amazonaws.com/beta/uploadfile", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+            console.log(JSON.stringify(payload));
+            if (response.ok) {
+                console.log("File uploaded successfully");
+            } else {
+                console.error("Error uploading file:", response.status, response.statusText, await response.text());
+            }
+        } catch (error) {
+            console.error("Error uploading file:", error);
+        }
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+
 // Function to handle adding a pin to the map
 function onMapClick(event) {
     const userLocation = event.latlng;
     latitude = userLocation.lat;
     longitude = userLocation.lng;
-    
+
     updateMapLocation(latitude, longitude);
 
     // Turn off Spoof Mode
@@ -146,7 +182,7 @@ function getLocation() {
         navigator.geolocation.getCurrentPosition(position => {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
-            
+
             updateMapLocation(latitude, longitude);
         });
     } else {
