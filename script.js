@@ -111,9 +111,14 @@ function updateMapLocation(latitude, longitude) {
 
 }
 async function deleteFile(button) {
+    button.innerText = "Deleting";
+    button.style.backgroundColor = "#22f";
+
     const fileContainer = button.parentElement.parentElement;
     const nameSpan = fileContainer.querySelector(".name");
     const fileName = nameSpan.textContent;
+
+    console.log("Deleting: ", fileName);
 
     const payload = {
         fileName: fileName + ".json",
@@ -133,15 +138,33 @@ async function deleteFile(button) {
             fileContainer.parentNode.remove(); // Remove the file entry from the page
         } else {
             console.error("Error deleting file:", response.status, response.statusText, await response.text());
+
+            button.innerText = "Delete error";
+            button.style.backgroundColor = "#f22";
+            setTimeout(function () {
+                button.innerText = "Delete";
+                button.style.backgroundColor = "#666";
+            }, 3000);
         }
     } catch (error) {
         console.error("Error deleting file:", error);
+
+        button.innerText = "Delete error";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Delete";
+            button.style.backgroundColor = "#666";
+        }, 3000);
     }
 }
 async function downloadFile(button) {
+    button.innerText = "Downloading";
+    button.style.backgroundColor = "#22f";
+
     const fileContainer = button.parentElement.parentElement;
     const nameSpan = fileContainer.querySelector(".name");
     const fileName = nameSpan.textContent;
+
     console.log("Downloading: ", fileName);
 
     const payload = {
@@ -180,11 +203,32 @@ async function downloadFile(button) {
             URL.revokeObjectURL(link.href);
 
             console.log("File downloaded successfully");
+
+            button.innerText = "Downloaded";
+            button.style.backgroundColor = "#2f2";
+            setTimeout(function () {
+                button.innerText = "Download";
+            }, 3000);
+
         } else {
             console.error("Error downloading file:", response.status, response.statusText, await response.text());
+
+            button.innerText = "Download error";
+            button.style.backgroundColor = "#f22";
+            setTimeout(function () {
+                button.innerText = "Download";
+                button.style.backgroundColor = "#2f2";
+            }, 3000);
         }
     } catch (error) {
         console.error("Error downloading file:", error);
+
+        button.innerText = "Download error";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Download";
+            button.style.backgroundColor = "#2f2";
+        }, 3000);
     }
 }
 
@@ -202,7 +246,24 @@ function addEntry(fileName) {
 //    user should be able to see, based on the files' locations and radii, and the user location
 // Then the lambda function sends a list of the names of all the available files
 // Then an entry is created in the entry list for each available file.
-async function scanForFiles() {
+async function scanForFiles(button) {
+    // Assert coordinates exist
+    if (latitude == null || longitude == null) {
+        console.error("No location coordinates");
+
+        button.innerText = "No location";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Scan for files";
+            button.style.backgroundColor = "#666";
+        }, 3000);
+
+        return;
+    }
+
+    button.innerText = "Scanning";
+    button.style.backgroundColor = "#22f";
+
     console.log("Scanning");
     const position = {
         longitude: longitude,
@@ -227,11 +288,28 @@ async function scanForFiles() {
             for (const fileName of availableFiles) {
                 addEntry(fileName);
             }
+
+            button.innerText = "Scan for files";
+            button.style.backgroundColor = "#666";
         } else {
             console.error("Error scanning files:", response.status, response.statusText, await response.text());
+
+            button.innerText = "Error scanning files";
+            button.style.backgroundColor = "#f22";
+            setTimeout(function () {
+                button.innerText = "Scan for files";
+                button.style.backgroundColor = "#666";
+            }, 3000);
         }
     } catch (error) {
         console.error("Error scanning files:", error);
+
+        button.innerText = "Error scanning files";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Scan for files";
+            button.style.backgroundColor = "#666";
+        }, 3000);
     }
 }
 
@@ -241,23 +319,54 @@ async function scanForFiles() {
 // Then this json file is encoded inside a payload json that is sent to the
 //    lambda function uploadfile(). This function stores the file json in the S3 bucket.
 // So if the user uploads image.png, it is stored as image.png.json in the S3 bucket
-async function uploadFile() {
+async function uploadFile(button) {
+    button.innerText = "Uploading";
+    button.style.backgroundColor = "#22f";
     let radius = document.getElementById("input-radius").value;
     console.log(radius, latitude, longitude);
 
     // Assert coordinates and radius exist
     if (latitude == null || longitude == null) {
         console.error("No location coordinates");
+
+        button.innerText = "No location";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Upload";
+            button.style.backgroundColor = "#2f2";
+        }, 3000);
+
         return;
     }
     if (radius == null || radius <= 0) {
         console.error("No input radius");
+
+        button.innerText = "No radius";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Upload";
+            button.style.backgroundColor = "#2f2";
+        }, 3000);
+
         return;
     }
 
 
     const fileInput = document.getElementById("file-upload");
     const file = fileInput.files[0];
+    // Assert file exists
+    if (file == null) {
+        console.error("No input file");
+
+        button.innerText = "No file";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Upload";
+            button.style.backgroundColor = "#2f2";
+        }, 3000);
+
+        return;
+    }
 
     const reader = new FileReader();
     reader.onloadend = async function () {
@@ -294,11 +403,32 @@ async function uploadFile() {
 
             if (response.ok) {
                 console.log("File uploaded successfully");
+                addEntry(payload.fileName.slice(0, -5));
+
+                button.innerText = "Uploaded";
+                button.style.backgroundColor = "#2f2";
+                setTimeout(function () {
+                    button.innerText = "Upload";
+                }, 3000);
             } else {
                 console.error("Error uploading file:", response.status, response.statusText, await response.text());
+
+                button.innerText = "Upload Error";
+                button.style.backgroundColor = "#f22";
+                setTimeout(function () {
+                    button.innerText = "Upload";
+                    button.style.backgroundColor = "#2f2";
+                }, 3000);
             }
         } catch (error) {
             console.error("Error uploading file:", error);
+
+            button.innerText = "Upload Error";
+            button.style.backgroundColor = "#f22";
+            setTimeout(function () {
+                button.innerText = "Upload";
+                button.style.backgroundColor = "#2f2";
+            }, 3000);
         }
     };
 
@@ -331,7 +461,12 @@ function toggleSpoofMode() {
     }
 }
 
-function getLocation() {
+function getLocation(button) {
+    console.log("Getting Location");
+
+    button.innerText = "Getting Location";
+    button.style.backgroundColor = "#22f";
+
     const location = document.getElementById("location");
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -339,8 +474,19 @@ function getLocation() {
             longitude = position.coords.longitude;
 
             updateMapLocation(latitude, longitude);
+            button.innerText = "Get Location";
+            button.style.backgroundColor = "#2f2";
         });
+
+
     } else {
         location.innerHTML = "Geolocation is not supported by this browser.";
+
+        button.innerText = "No Geolocation";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Get Location";
+            button.style.backgroundColor = "#2f2";
+        }, 3000);
     }
 }
