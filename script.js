@@ -248,6 +248,9 @@ function addEntry(fileName) {
 // Then an entry is created in the entry list for each available file.
 async function scanForFiles(button) {
     // Assert coordinates exist
+    // If you are wondering why I do this instead of just calling getLocation(),
+    // For testing and demonstration, we need the location spoofer, which that would override
+    // In a "public release" we would remove the spoofer and put getLocation() here.
     if (latitude == null || longitude == null) {
         console.error("No location coordinates");
 
@@ -464,8 +467,10 @@ function toggleSpoofMode() {
 function getLocation(button) {
     console.log("Getting Location");
 
-    button.innerText = "Getting Location";
-    button.style.backgroundColor = "#22f";
+    if (button) {
+        button.innerText = "Getting Location";
+        button.style.backgroundColor = "#22f";
+    }
 
     const location = document.getElementById("location");
     if (navigator.geolocation) {
@@ -474,19 +479,23 @@ function getLocation(button) {
             longitude = position.coords.longitude;
 
             updateMapLocation(latitude, longitude);
-            button.innerText = "Get Location";
-            button.style.backgroundColor = "#2f2";
+            if (button) {
+                button.innerText = "Get Location";
+                button.style.backgroundColor = "#2f2";
+            }
         });
 
 
     } else {
         location.innerHTML = "Geolocation is not supported by this browser.";
 
-        button.innerText = "No Geolocation";
-        button.style.backgroundColor = "#f22";
-        setTimeout(function () {
-            button.innerText = "Get Location";
-            button.style.backgroundColor = "#2f2";
-        }, 3000);
+        if (button) {
+            button.innerText = "No Geolocation";
+            button.style.backgroundColor = "#f22";
+            setTimeout(function () {
+                button.innerText = "Get Location";
+                button.style.backgroundColor = "#2f2";
+            }, 3000);
+        }
     }
 }
