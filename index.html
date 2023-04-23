@@ -8,11 +8,26 @@
 		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
 		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+	<style>
+		.footer{
+			background-color: #222;
+			color: #fff;
+			text-align: center;
+			padding: 20px;
+			flex: 0 0 auto;
+		}
+		.list-style{
+			list-style-type:none!important;
+			cursor:pointer;
+			font-size:.75rem;
+			opacity:.8;
+		}
+		</style>
 </head>
 
 <body>
 	<header>
-		<h1>Project Geo-Share</h1>
+		<h1>Project Bloomington - GeoShare</h1>
 	</header>
 	<main>
 		<div class="left-box">
@@ -81,13 +96,25 @@
 
 	<!-- Location spoofer, click this, then click map to drop pin -->
 	<div>
-		<button id="spoof-pin" class="div-button" onclick="toggleSpoofMode()">Set Location</button>
-	</div>
-	<div>
-		<button id="show-circles" class="div-button" onclick="showCircles(this)">Show all file circles</button>
-		<button id="clear-circles" class="div-button" onclick="clearCircles(this)">Clear</button>
+		<button id="spoof-pin" onclick="toggleSpoofMode()">Set Location</button>
 	</div>
 
+
+<footer class="text-center footer text-center">
+	<div class="container p-4">
+	  
+		<div class="row  text-md-start mt-5">
+		  
+			<!--Logo Start-->
+		  <div class="col-md-4 ">
+			<h4 class="pb-3">Project Bloomington <span class="Analyst">-  GeoShare</span></h4>
+			
+			<p class="copy-right"> </p>
+		  </div>
+		</div>
+	  
+	</div>
+  </footer>
 
 
 
