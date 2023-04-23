@@ -4,95 +4,106 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>LBFS</title>
-	
+
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
 		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
 		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 	<style>
-		.footer{
+		.footer {
 			background-color: #222;
 			color: #fff;
 			text-align: center;
 			padding: 20px;
 			flex: 0 0 auto;
 		}
-		.list-style{
-			list-style-type:none!important;
-			cursor:pointer;
-			font-size:.75rem;
-			opacity:.8;
+
+		.list-style {
+			list-style-type: none !important;
+			cursor: pointer;
+			font-size: .75rem;
+			opacity: .8;
 		}
+
 		body {
 			color: black;
 			font-size: 25px;
 		}
+
 		.dark-mode {
 			background-color: black;
 			color: white;
 		}
+
 		.light-mode {
 			background-color: white;
 			color: black;
 		}
-		</style>
+	</style>
 </head>
 
 <body>
 	<header>
 		<h1>Project Bloomington - GeoShare</h1>
 	</header>
+	
 	<main>
-		
-
-		<div class="left-box">
-			<!-- This is the controls and display for grabbing user location -->
-			<div class="location-container">
-				<button class="button-enter" onclick="getLocation(this)">Get Location</button>
-				<div class="location" id="location"></div>
-			</div>
-
-			<!-- The map display -->
-			<!-- html code modified from OpenStreetMap share button,						-->
-			<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
-			<div class="map" id="map"></div>
-			<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger
-					Map</a></small>
-		</div>
-
-
-		<!-- Everything inside right-box is still barely developed, go ahead and modify -->
-		<div class="right-box">
-			<button onclick="scanForFiles(this)">Scan for files</button><br><br>
-			<div class="entry">
-				<div class="file-container">
-
-					<div>
-						<button onclick="darkMode()">Darkmode</button>
-					</div>
-					
-					<!-- Entry content here -->
-					<span class="name"><br><br>Enter File</span>
-	
-	
-					<div class="file-upload-container">
-						<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
-						<label for="file-upload">Choose a file</label>
-					</div>
-					<input type="text" id="input-radius" name="input_radius" placeholder="Enter Radius in meters" id="input_radius"
-						oninput="inputRadius(event)"><br><br>
-	
-					<div>
-						<button type="submit" class="button-enter" onclick="uploadFile(this)">Upload</button>
-	
-					</div>
-					
+		<div class="box-container">
+			<div class="left-box">
+				<!-- This is the controls and display for grabbing user location -->
+				<div class="location-container">
+					<button class="button-enter" onclick="getLocation(this)">Get Location</button>
+					<div class="location" id="location"></div>
 				</div>
-	
-			</div>
-			<div id="entry-container">
 
+				<!-- The map display -->
+				<!-- html code modified from OpenStreetMap share button,						-->
+				<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
+				<div class="map" id="map"></div>
+				<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328" filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);>View Larger
+					Map</a></small>
+				<!-- Location spoofer, click this, then click map to drop pin -->
+				<div>
+					<button id="spoof-pin" class="div-button" onclick="toggleSpoofMode()">Set Location</button>
+				</div>
+				<div>
+					<button id="show-circles" class="div-button" onclick="showCircles(this)">Show all file
+						circles</button>
+					<button id="clear-circles" class="div-button" onclick="clearCircles(this)">Clear</button>
+				</div>
+				<div>
+					<button onclick="darkMode()" class="div-button">Darkmode</button>
+				</div>
+			</div>
+
+
+			<!-- Everything inside right-box is still barely developed, go ahead and modify -->
+			<div class="right-box">
+				<button onclick="scanForFiles(this)">Scan for files</button><br><br>
+				<div class="entry">
+					<div class="file-container">
+
+						
+						<!-- Entry content here -->
+
+						<div class="file-upload-container">
+							<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
+							<label for="file-upload" id="file-upload-label">Choose a file</label>
+						</div>
+						<input type="text" id="input-radius" name="input_radius" placeholder="Enter Radius in meters"
+							id="input_radius" oninput="inputRadius(event)"><br><br>
+
+						<div>
+							<button type="submit" class="button-enter" onclick="uploadFile(this)">Upload</button>
+						</div>
+
+					</div>
+
+				</div>
+				<div id="entry-container">
+
+				</div>
 			</div>
 		</div>
 	</main>
@@ -113,38 +124,29 @@
 		</div>
 	</template>
 
-	
+	<footer class="text-center footer text-center">
+		<div class="container p-4">
 
+			<div class="row  text-md-start mt-5">
 
-	<!-- Location spoofer, click this, then click map to drop pin -->
-	<div>
-		<button id="spoof-pin" onclick="toggleSpoofMode()">Set Location</button>
-	</div>
+				<!--Logo Start-->
+				<div class="col-md-4 ">
+					<h4 class="pb-3">Project Bloomington <span class="Analyst">- GeoShare</span></h4>
 
+					<p class="copy-right"> </p>
+				</div>
+			</div>
 
-<footer class="text-center footer text-center">
-	<div class="container p-4">
-	  
-		<div class="row  text-md-start mt-5">
-		  
-			<!--Logo Start-->
-		  <div class="col-md-4 ">
-			<h4 class="pb-3">Project Bloomington <span class="Analyst">-  GeoShare</span></h4>
-			
-			<p class="copy-right"> </p>
-		  </div>
 		</div>
-	  
-	</div>
-  </footer>
+	</footer>
 
 
-  <script>
-	function darkMode() {
-	  var element = document.body;
-	  element.classList.toggle("dark-mode");
-	}
-  </script>
+	<script>
+		function darkMode() {
+			var element = document.body;
+			element.classList.toggle("dark-mode");
+		}
+	</script>
 	<script type="text/javascript" src="script.js"></script>
 
 

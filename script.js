@@ -22,11 +22,15 @@ let latitude = null;
 
 
 function updateFileName(event) {
-    var input = event.target;
-    var fileName = input.files[0].name;
-    var fileNameElement = input.parentElement.parentElement.parentElement.querySelector(".name");
-    fileNameElement.innerHTML = fileName;
-    fileNameElement.classList.add('active');
+    const fileUploadLabel = document.getElementById('file-upload-label');
+    const input = event.target;
+    const fileName = input.files[0].name;
+
+    if (fileName) {
+        fileUploadLabel.textContent = fileName;
+    } else {
+        fileUploadLabel.textContent = "Choose a file";
+    }
 }
 
 function deleteEntry(button) {
@@ -364,6 +368,7 @@ async function scanForFiles(button) {
             entryContainer.innerHTML = '';
 
             const responseBody = await response.json();
+            console.log(responseBody);
             const availableFiles = JSON.parse(responseBody.body);
             console.log("Files available:", availableFiles);
             for (const fileName of availableFiles) {
@@ -453,7 +458,7 @@ async function uploadFile(button) {
     reader.onloadend = async function () {
         // Convert the file to a base64-encoded string to store in the json
         const base64FileContent = reader.result.split(",")[1];
-
+        console.log(base64FileContent);
         const jsonFile = {
             fileName: file.name,
             fileContent: base64FileContent,
