@@ -22,11 +22,15 @@ let latitude = null;
 
 
 function updateFileName(event) {
-    var input = event.target;
-    var fileName = input.files[0].name;
-    var fileNameElement = input.parentElement.parentElement.parentElement.querySelector(".name");
-    fileNameElement.innerHTML = fileName;
-    fileNameElement.classList.add('active');
+    const fileUploadLabel = document.getElementById('file-upload-label');
+    const input = event.target;
+    const fileName = input.files[0].name;
+
+    if (fileName) {
+        fileUploadLabel.textContent = fileName;
+    } else {
+        fileUploadLabel.textContent = "Choose a file";
+    }
 }
 
 function deleteEntry(button) {

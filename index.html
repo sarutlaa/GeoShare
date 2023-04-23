@@ -16,48 +16,56 @@
 		<h1>Project Geo-Share</h1>
 	</header>
 	<main>
-		<div class="left-box">
-			<!-- This is the controls and display for grabbing user location -->
-			<div class="location-container">
-				<button class="button-enter" onclick="getLocation(this)">Get Location</button>
-				<div class="location" id="location"></div>
-			</div>
-
-			<!-- The map display -->
-			<!-- html code modified from OpenStreetMap share button,						-->
-			<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
-			<div class="map" id="map"></div>
-			<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger
-					Map</a></small>
-		</div>
-
-
-		<!-- Everything inside right-box is still barely developed, go ahead and modify -->
-		<div class="right-box">
-			<button onclick="scanForFiles(this)">Scan for files</button>
-			<div class="entry">
-				<div class="file-container">
-					<!-- Entry content here -->
-					<span class="name">Enter File</span>
-	
-	
-					<div class="file-upload-container">
-						<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
-						<label for="file-upload">Choose a file</label>
-					</div>
-					<input type="text" id="input-radius" name="input_radius" placeholder="Enter Radius in meters" id="input_radius"
-						oninput="inputRadius(event)"><br><br>
-	
-					<div>
-						<button type="submit" class="button-enter" onclick="uploadFile(this)">Upload</button>
-	
-					</div>
-	
+		<div class="box-container">
+			<div class="left-box">
+				<!-- This is the controls and display for grabbing user location -->
+				<div class="location-container">
+					<button class="button-enter" onclick="getLocation(this)">Get Location</button>
+					<div class="location" id="location"></div>
 				</div>
-	
-			</div>
-			<div id="entry-container">
 
+				<!-- The map display -->
+				<!-- html code modified from OpenStreetMap share button,						-->
+				<!-- 	suggested by https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML -->
+				<div class="map" id="map"></div>
+				<small><a id="osm-link" href="https://www.openstreetmap.org/#map=18/39.17294/-86.52328">View Larger
+						Map</a></small>
+				<!-- Location spoofer, click this, then click map to drop pin -->
+				<div>
+					<button id="spoof-pin" class="div-button" onclick="toggleSpoofMode()">Set Location</button>
+				</div>
+				<div>
+					<button id="show-circles" class="div-button" onclick="showCircles(this)">Show all file
+						circles</button>
+					<button id="clear-circles" class="div-button" onclick="clearCircles(this)">Clear</button>
+				</div>
+			</div>
+
+
+			<!-- Everything inside right-box is still barely developed, go ahead and modify -->
+			<div class="right-box">
+				<button onclick="scanForFiles(this)">Scan for files</button>
+				<div class="entry">
+					<div class="file-container">
+						<!-- Entry content here -->
+
+						<div class="file-upload-container">
+							<input type="file" id="file-upload" name="file" onchange="updateFileName(event)">
+							<label for="file-upload" id="file-upload-label">Choose a file</label>
+						</div>
+						<input type="text" id="input-radius" name="input_radius" placeholder="Enter Radius in meters"
+							id="input_radius" oninput="inputRadius(event)"><br><br>
+
+						<div>
+							<button type="submit" class="button-enter" onclick="uploadFile(this)">Upload</button>
+						</div>
+
+					</div>
+
+				</div>
+				<div id="entry-container">
+
+				</div>
 			</div>
 		</div>
 	</main>
@@ -80,14 +88,7 @@
 
 
 
-	<!-- Location spoofer, click this, then click map to drop pin -->
-	<div>
-		<button id="spoof-pin" class="div-button" onclick="toggleSpoofMode()">Set Location</button>
-	</div>
-	<div>
-		<button id="show-circles" class="div-button" onclick="showCircles(this)">Show all file circles</button>
-		<button id="clear-circles" class="div-button" onclick="clearCircles(this)">Clear</button>
-	</div>
+
 
 
 
