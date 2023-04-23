@@ -15,6 +15,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
 let currentLocationMarker = null;
 let inputCircle = null;
+let fileCircles = [];
 let longitude = null;
 let latitude = null;
 
@@ -55,15 +56,24 @@ function getRandomColor() {
     return color;
 }
 
-function drawCircle(latitude, longitude, radius, color = getRandomColor()) {
+function drawCircle(latitude, longitude, radius, color = getRandomColor(), tooltipText = '') {
     const circleOptions = {
         color: color,
         fillColor: color,
         fillOpacity: 0.5,
         radius: radius
     };
-    return circle = L.circle([latitude, longitude], circleOptions).addTo(map);
+    const circle = L.circle([latitude, longitude], circleOptions).addTo(map);
 
+    // Add tooltip if 'tooltipText' is not an empty string
+    if (tooltipText !== '') {
+        circle.bindTooltip(tooltipText, {
+            permanent: false,
+            direction: 'auto'
+        });
+    }
+
+    return circle;
 }
 
 // While the user types in the input radius box,
@@ -110,6 +120,74 @@ function updateMapLocation(latitude, longitude) {
     osmLinkHref.setAttribute("href", newHref);
 
 }
+
+// This function is for testing and demonstration, it draws the 
+//    circles for every file to see where they all are
+async function showCircles(button) {
+    // Clear any circles from before
+    for (circle of fileCircles) {
+        map.removeLayer(circle);
+    }
+
+    button.innerText = "Fetching circles";
+    button.style.backgroundColor = "#22f";
+
+    console.log("Fetching circles");
+
+    try {
+        const response = await fetch("https://7w1gk3m52g.execute-api.us-east-2.amazonaws.com/beta/showcircles", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: null,
+        });
+
+        if (response.ok) {
+            const responseBody = await response.json();
+            const availableFiles = JSON.parse(responseBody.body);
+            console.log("Files available:", availableFiles);
+
+            // Sort availableFiles based on the radius (ascending order)
+            // This makes sure encompassed circles are drawn in front
+            availableFiles.sort((b, a) => a[2] - b[2]);
+
+            for (const tuple of availableFiles) {
+                circle = drawCircle(tuple[0],tuple[1],tuple[2],undefined,tuple[3]);
+                circle.bringToFront(); // Bring the current circle to front
+                fileCircles.push(circle);
+            }
+
+            button.innerText = "Show all file circles";
+            button.style.backgroundColor = "#666";
+        } else {
+            console.error("Error getting files:", response.status, response.statusText, await response.text());
+
+            button.innerText = "Error getting files";
+            button.style.backgroundColor = "#f22";
+            setTimeout(function () {
+                button.innerText = "Show all file circles";
+                button.style.backgroundColor = "#666";
+            }, 3000);
+        }
+    } catch (error) {
+        console.error("Error getting files:", error);
+
+        button.innerText = "Error getting files";
+        button.style.backgroundColor = "#f22";
+        setTimeout(function () {
+            button.innerText = "Show all file circles";
+            button.style.backgroundColor = "#666";
+        }, 3000);
+    }
+}
+
+function clearCircles(button) {
+    for (circle of fileCircles) {
+        map.removeLayer(circle);
+    } 
+}
+
 async function deleteFile(button) {
     button.innerText = "Deleting";
     button.style.backgroundColor = "#22f";

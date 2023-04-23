@@ -187,7 +187,7 @@ button:hover {
     display: block;
 }
 
-#spoof-pin {
+.div-button {
     margin-top: 2px;
     padding: 4px 8px;
     font-size: 12px;

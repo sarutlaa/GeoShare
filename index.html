@@ -12,7 +12,7 @@
 
 <body>
 	<header>
-		<h1>Location Based File Sharing</h1>
+		<h1>Project Geo-Share</h1>
 	</header>
 	<main>
 		<div class="left-box">
@@ -81,7 +81,11 @@
 
 	<!-- Location spoofer, click this, then click map to drop pin -->
 	<div>
-		<button id="spoof-pin" onclick="toggleSpoofMode()">Set Location</button>
+		<button id="spoof-pin" class="div-button" onclick="toggleSpoofMode()">Set Location</button>
+	</div>
+	<div>
+		<button id="show-circles" class="div-button" onclick="showCircles(this)">Show all file circles</button>
+		<button id="clear-circles" class="div-button" onclick="clearCircles(this)">Clear</button>
 	</div>
 
 
