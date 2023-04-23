@@ -149,21 +149,34 @@ async function showCircles(button) {
 
         if (response.ok) {
             const responseBody = await response.json();
-            const availableFiles = JSON.parse(responseBody.body);
-            console.log("Files available:", availableFiles);
 
-            // Sort availableFiles based on the radius (ascending order)
-            // This makes sure encompassed circles are drawn in front
-            availableFiles.sort((b, a) => a[2] - b[2]);
+            // Check for an errorMessage in the response
+            if (responseBody.errorMessage) {
+                console.error("Lambda function error:", responseBody.errorMessage);
 
-            for (const tuple of availableFiles) {
-                circle = drawCircle(tuple[0],tuple[1],tuple[2],undefined,tuple[3]);
-                circle.bringToFront(); // Bring the current circle to front
-                fileCircles.push(circle);
+                button.innerText = "Time out error";
+                button.style.backgroundColor = "#f22";
+                setTimeout(function () {
+                    button.innerText = "Show all file circles";
+                    button.style.backgroundColor = "#666";
+                }, 3000);
+            } else {
+                const availableFiles = JSON.parse(responseBody.body);
+                console.log("Files available:", availableFiles);
+
+                // Sort availableFiles based on the radius (ascending order)
+                // This makes sure encompassed circles are drawn in front
+                availableFiles.sort((b, a) => a[2] - b[2]);
+
+                for (const tuple of availableFiles) {
+                    circle = drawCircle(tuple[0], tuple[1], tuple[2], undefined, tuple[3]);
+                    circle.bringToFront(); // Bring the current circle to front
+                    fileCircles.push(circle);
+                }
+
+                button.innerText = "Show all file circles";
+                button.style.backgroundColor = "#666";
             }
-
-            button.innerText = "Show all file circles";
-            button.style.backgroundColor = "#666";
         } else {
             console.error("Error getting files:", response.status, response.statusText, await response.text());
 
@@ -186,10 +199,11 @@ async function showCircles(button) {
     }
 }
 
+
 function clearCircles(button) {
     for (circle of fileCircles) {
         map.removeLayer(circle);
-    } 
+    }
 }
 
 async function deleteFile(button) {
@@ -199,11 +213,12 @@ async function deleteFile(button) {
     const fileContainer = button.parentElement.parentElement;
     const nameSpan = fileContainer.querySelector(".name");
     const fileName = nameSpan.textContent;
+    const fileID = fileContainer.getAttribute('file-id');
 
-    console.log("Deleting: ", fileName);
+    console.log("Deleting: ", fileName, fileID);
 
     const payload = {
-        fileName: fileName + ".json",
+        fileName: fileID,
     };
 
     try {
@@ -246,11 +261,12 @@ async function downloadFile(button) {
     const fileContainer = button.parentElement.parentElement;
     const nameSpan = fileContainer.querySelector(".name");
     const fileName = nameSpan.textContent;
+    const fileID = fileContainer.getAttribute('file-id');
 
-    console.log("Downloading: ", fileName);
+    console.log("Downloading: ", fileName, fileID);
 
     const payload = {
-        fileName: fileName + ".json",
+        fileName: fileID,
     };
 
     try {
@@ -280,7 +296,7 @@ async function downloadFile(button) {
             // Download the file
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = jsonData.fileName;
+            link.download = fileName;
             link.click();
             URL.revokeObjectURL(link.href);
 
@@ -314,11 +330,18 @@ async function downloadFile(button) {
     }
 }
 
+
+
+
 // Adds a new blank entry
-function addEntry(fileName) {
+function addEntry(fileID, fileName) {
     const newEntry = entryTemplate.content.cloneNode(true);
     const nameSpan = newEntry.querySelector('.name');
     nameSpan.textContent = fileName;
+
+    const fileContainer = newEntry.querySelector('.file-container');
+    fileContainer.setAttribute('file-id', fileID);
+
     entryContainer.appendChild(newEntry);
 
 }
@@ -369,14 +392,27 @@ async function scanForFiles(button) {
 
             const responseBody = await response.json();
             console.log(responseBody);
-            const availableFiles = JSON.parse(responseBody.body);
-            console.log("Files available:", availableFiles);
-            for (const fileName of availableFiles) {
-                addEntry(fileName);
-            }
 
-            button.innerText = "Scan for files";
-            button.style.backgroundColor = "#666";
+            // Check for an errorMessage in the response
+            if (responseBody.errorMessage) {
+                console.error("Lambda function error:", responseBody.errorMessage);
+
+                button.innerText = "Time out error";
+                button.style.backgroundColor = "#f22";
+                setTimeout(function () {
+                    button.innerText = "Scan for files";
+                    button.style.backgroundColor = "#666";
+                }, 3000);
+            } else {
+                const availableFiles = JSON.parse(responseBody.body);
+                console.log("Files available:", availableFiles);
+                for (const file of availableFiles) {
+                    addEntry(file[0],file[1]);
+                }
+
+                button.innerText = "Scan for files";
+                button.style.backgroundColor = "#666";
+            }
         } else {
             console.error("Error scanning files:", response.status, response.statusText, await response.text());
 
@@ -458,24 +494,14 @@ async function uploadFile(button) {
     reader.onloadend = async function () {
         // Convert the file to a base64-encoded string to store in the json
         const base64FileContent = reader.result.split(",")[1];
-        console.log(base64FileContent);
-        const jsonFile = {
+
+        const payload = {
             fileName: file.name,
             fileContent: base64FileContent,
+            mimeType: file.type,
             longitude: longitude,
             latitude: latitude,
             radius: radius,
-        }
-
-        // Convert jsonFile to a json string
-        const jsonString = JSON.stringify(jsonFile);
-
-        // Convert the json string to a base64-encoded string
-        const base64Json = btoa(jsonString);
-
-        const payload = {
-            fileName: file.name + ".json",
-            fileContent: base64Json,
         };
 
         try {
@@ -489,7 +515,7 @@ async function uploadFile(button) {
 
             if (response.ok) {
                 console.log("File uploaded successfully");
-                addEntry(payload.fileName.slice(0, -5));
+                
 
                 button.innerText = "Uploaded";
                 button.style.backgroundColor = "#2f2";
