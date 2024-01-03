@@ -1,4 +1,4 @@
-# Location based file sharing system
+# Location Based File Sharing System
 
 AWS Deployment : https://location-based-file-share.s3.us-east-2.amazonaws.com/index.html
 
